@@ -4,17 +4,12 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.print("Type the name of the player: ");
         Scanner sc = new Scanner(System.in);
-        String playerName = sc.nextLine();
-        System.out.println();
+        GameInitializer initializer = new GameInitializer(sc);
 
-        // get the number of rows and columns from user
-        int rows = Game.getValidDimension(sc, "rows", 4, 12);
-        int cols = Game.getValidDimension(sc, "columns", 4, rows);
-
-        System.out.println();
-        Game game = new Game(rows, cols, playerName);
+        Game game = initializer.initializeGame();
         game.start();
+
+        sc.close();
     }
 }

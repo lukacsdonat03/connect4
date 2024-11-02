@@ -1,10 +1,15 @@
 package hu.nye;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
-    private final GameBoard board;
+    private GameBoard board;
     private final Player player1;
     private final Player player2;
     private Player currentPlayer;
@@ -16,6 +21,13 @@ public class Game {
         this.currentPlayer = this.player1;
     }
 
+    public Game(String name, String filename){
+        this.player1 = new Player(name , 'X');
+        this.player2 = new Player("Opponent", 'O');
+        this.currentPlayer = this.player1;
+        this.board = this.loadFromFile(filename);
+    }
+
     public void start(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("The game started!");
@@ -24,11 +36,16 @@ public class Game {
 
         while(true){
             System.out.println(this.currentPlayer.getName() + "'s turn (" + this.currentPlayer.getDisc() + ")");
-            int column;
+            int column = -1;
 
             if(this.currentPlayer == this.player1){
                 System.out.print("Enter column (1-" + (this.board.getColumns()) + "): ");
-                column = scanner.nextInt();
+                try{
+                    column = scanner.nextInt();
+                }catch (InputMismatchException exc){
+                    System.out.println("Invalid input. Please enter a valid number!");
+                    scanner.next();
+                }
             } else {
                 column = new Random().nextInt(this.board.getColumns());
                 System.out.println("Opponent chooses column " + (column + 1));
@@ -81,6 +98,41 @@ public class Game {
         return dimension;
     }
 
+    public GameBoard loadFromFile(String filename) {
+        File file = new File(filename);
+        if (!file.exists()) {
+            return null;
+        }
+        try {
+            List<String> lines = Files.readAllLines(file.toPath());
+            char[][] matrix = new char[lines.size()][];
+            int singleLineSize = lines.get(0).toCharArray().length;
+            for (int row = 0; row < lines.size(); row++) {
+                char[] line = lines.get(row).toCharArray();
+                matrix[row] = line;
+            }
+            this.board = new GameBoard(lines.size(),singleLineSize);
+            this.board.loadGameboard(matrix);
+            return this.board;
+        } catch (IOException e) {
+            System.out.println("Failed to open the file: " + e.getMessage());
+            return null;
+        }
+    }
 
+    public GameBoard getBoard() {
+        return board;
+    }
 
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
 }
