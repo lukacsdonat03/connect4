@@ -3,6 +3,7 @@ package hu.nye;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Random;
@@ -13,19 +14,25 @@ public class Game {
     private final Player player1;
     private final Player player2;
     private Player currentPlayer;
+    private boolean saveGame;
+    private String saveFile;
 
-    public Game(int row, int col, String name) {
+    public Game(int row, int col, String name,boolean save,String saveFile) {
         this.board = new GameBoard(row,col);
         this.player1 = new Player(name , 'X');
         this.player2 = new Player("Opponent", 'O');
         this.currentPlayer = this.player1;
+        this.saveGame = save;
+        this.saveFile = saveFile;
     }
 
-    public Game(String name, String filename){
+    public Game(String name, String filename, boolean save, String saveFile){
         this.player1 = new Player(name , 'X');
         this.player2 = new Player("Opponent", 'O');
         this.currentPlayer = this.player1;
         this.board = this.loadFromFile(filename);
+        this.saveGame = save;
+        this.saveFile = saveFile;
     }
 
     public void start(){
@@ -33,33 +40,39 @@ public class Game {
         System.out.println("The game started!");
 
         this.board.printBoard();
+        if (this.board.checkWin(this.currentPlayer.getDisc())) {
+            System.out.println(this.currentPlayer.getName() + " wins!");
+        }else{
+            while(true){
+                System.out.println(this.currentPlayer.getName() + "'s turn (" + this.currentPlayer.getDisc() + ")");
+                int column = -1;
 
-        while(true){
-            System.out.println(this.currentPlayer.getName() + "'s turn (" + this.currentPlayer.getDisc() + ")");
-            int column = -1;
-
-            if(this.currentPlayer == this.player1){
-                System.out.print("Enter column (1-" + (this.board.getColumns()) + "): ");
-                try{
-                    column = scanner.nextInt();
-                }catch (InputMismatchException exc){
-                    System.out.println("Invalid input. Please enter a valid number!");
-                    scanner.next();
+                if(this.currentPlayer == this.player1){
+                    System.out.print("Enter column (1-" + (this.board.getColumns()) + "): ");
+                    try{
+                        column = scanner.nextInt();
+                    }catch (InputMismatchException exc){
+                        System.out.println("Invalid input. Please enter a valid number!");
+                        scanner.next();
+                    }
+                } else {
+                    column = new Random().nextInt(this.board.getColumns());
+                    System.out.println("Opponent chooses column " + (column + 1));
                 }
-            } else {
-                column = new Random().nextInt(this.board.getColumns());
-                System.out.println("Opponent chooses column " + (column + 1));
-            }
 
-            if (this.board.placeDisc(column, this.currentPlayer.getDisc())) {
-                this.board.printBoard();
-                if (this.board.checkWin(this.currentPlayer.getDisc())) {
-                    System.out.println(this.currentPlayer.getName() + " wins!");
-                    break;
+                if (this.board.placeDisc(column, this.currentPlayer.getDisc())) {
+                    if(this.saveGame){
+                        this.saveBoardToFile(this.saveFile);
+                    }
+                    this.board.printBoard();
+                    if (this.board.checkWin(this.currentPlayer.getDisc())) {
+                        System.out.println(this.currentPlayer.getName() + " wins!");
+                        break;
+                    }
+                    switchPlayer();
+                } else {
+                    System.out.println("Invalid move, try again.");
                 }
-                switchPlayer();
-            } else {
-                System.out.println("Invalid move, try again.");
             }
         }
         scanner.close();
@@ -120,6 +133,26 @@ public class Game {
         }
     }
 
+    public void saveBoardToFile(String filename){
+        try{
+            Files.write(Paths.get(filename), this.saveBoardToString().getBytes());
+            System.out.println("The board has been successfully saved");
+        } catch (IOException e) {
+            System.out.println("Failed to save the board to file: "+filename);
+        }
+    }
+
+    private String saveBoardToString(){
+        StringBuilder sb = new StringBuilder();
+        for(char[] row : this.getBoard().getBoard()){
+            for(char cell : row){
+                sb.append(cell);
+            }
+            sb.append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
     public GameBoard getBoard() {
         return board;
     }
@@ -134,5 +167,13 @@ public class Game {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public boolean isSaveGame() {
+        return saveGame;
+    }
+
+    public void setSaveGame(boolean saveGame) {
+        this.saveGame = saveGame;
     }
 }

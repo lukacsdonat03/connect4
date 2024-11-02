@@ -22,13 +22,24 @@ public class GameInitializer {
     }
 
     private Game loadGameOrSetupNewGame(String playerName) {
+        boolean save = false;
+        String saveFile = "";
+        System.out.print("Do you want to create save for the game? (yes/no): ");
+        String saveResponse = sc.nextLine().trim().toLowerCase();
+
+        if(saveResponse.equals("yes")){
+            System.out.print("Enter the file name: ");
+            saveFile = sc.nextLine();
+            save = true;
+        }
+
         System.out.print("Do you want to load a game from a file? (yes/no): ");
         String loadResponse = sc.nextLine().trim().toLowerCase();
 
         if (loadResponse.equals("yes")) {
             System.out.print("Enter the filename: ");
             String filename = sc.nextLine();
-            Game loadedGame = new Game(playerName, filename);
+            Game loadedGame = new Game(playerName, filename,save, saveFile);
 
             if (loadedGame.getBoard() != null) {
                 return loadedGame;
@@ -39,7 +50,7 @@ public class GameInitializer {
 
         int rows = Game.getValidDimension(sc, "rows", 4, 12);
         int cols = Game.getValidDimension(sc, "columns", 4, rows);
-        return new Game(rows, cols, playerName);
+        return new Game(rows, cols, playerName,save, saveFile);
     }
 
 }
