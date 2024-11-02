@@ -18,7 +18,7 @@ public class GameBoard {
 
     public boolean placeDisc(int column, char disc){
         //validálás
-        if(column-1<0 || column >= this.columns){
+        if(column-1<0 || column-1 >= this.columns){
             return false;
         }
 

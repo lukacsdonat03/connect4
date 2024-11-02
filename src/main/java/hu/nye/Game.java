@@ -52,5 +52,35 @@ public class Game {
         this.currentPlayer = (this.currentPlayer == this.player1) ? this.player2 : this.player1;
     }
 
+    public static int getValidDimension(Scanner sc, String dimensionName, int min, int max) {
+        int dimension;
+        StringBuilder messageBuilder = new StringBuilder();
+
+        messageBuilder.append("Number of ")
+                .append(dimensionName)
+                .append(" (")
+                .append(min)
+                .append(" <= ")
+                .append(dimensionName)
+                .append(" <= ")
+                .append(max)
+                .append("): ");
+
+        String promptMessage = messageBuilder.toString();
+
+        while (true) {
+            System.out.print(promptMessage);
+            dimension = sc.nextInt();
+
+            if (dimension >= min && dimension <= max) {
+                break;
+            } else {
+                System.out.println("Invalid input. " + dimensionName + " must be between " + min + " and " + max + ".");
+            }
+        }
+        return dimension;
+    }
+
+
 
 }
