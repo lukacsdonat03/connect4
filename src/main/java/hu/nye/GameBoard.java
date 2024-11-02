@@ -1,0 +1,87 @@
+package hu.nye;
+
+import java.util.Arrays;
+
+public class GameBoard {
+    private final char [][] board;
+    private final int rows;
+    private final int columns;
+
+    public GameBoard(int rows, int columns) {
+        this.rows = rows;
+        this.columns = columns;
+        this.board = new char[this.rows][this.columns];
+        for(char[] row: this.board){
+            Arrays.fill(row,'-');
+        }
+    }
+
+    public boolean placeDisc(int column, char disc){
+        //validálás
+        if(column-1<0 || column >= this.columns){
+            return false;
+        }
+
+        for(int row = this.rows-1; row >= 0; row--){
+            if(this.board[row][column-1] == '-'){
+                this.board[row][column-1] = disc;
+                return true;
+            }
+        }
+
+        //A column null
+        return false;
+    }
+
+    public boolean checkWin(char disc){
+
+        for(int row = 0; row < this.rows; row++){
+            for(int col = 0; col < this.columns; col++){
+                if (checkDirection(row, col, 1, 0, disc) || // horizontális -
+                        checkDirection(row, col, 0, 1, disc) || // vertilális |
+                        checkDirection(row, col, 1, 1, disc) || // átlós \
+                        checkDirection(row, col, 1, -1, disc)) { // átlós /
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkDirection(int row, int col, int dRow, int dCol, char disc) {
+        int count = 0;
+        for (int i = 0; i < 4; i++) {
+            int r = row + i * dRow;
+            int c = col + i * dCol;
+            if (r >= 0 && r < this.rows && c >= 0 && c < this.columns && this.board[r][c] == disc) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count == 4;
+    }
+
+    public void printBoard() {
+        for (char[] row : this.board) {
+            for (char cell : row) {
+                System.out.print(cell + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public char[][] getBoard() {
+        return board;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+}
