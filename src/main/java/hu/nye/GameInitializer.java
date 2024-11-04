@@ -1,5 +1,7 @@
 package hu.nye;
 
+import hu.nye.highscore.HighscoreDatabase;
+
 import java.util.Scanner;
 
 public class GameInitializer {
@@ -16,6 +18,38 @@ public class GameInitializer {
         return game;
     }
 
+    private void menu() {
+        System.out.println("\t MENU");
+        System.out.println("Play game (p)");
+        System.out.println("Highscore (h)");
+        System.out.println("Exit (e)");
+    }
+
+    public void startMenu() {
+        String option;
+        do {
+            menu();
+            option = sc.nextLine().trim().toLowerCase();
+
+            switch (option) {
+                case "h":
+                    HighscoreDatabase hdb = new HighscoreDatabase();
+                    hdb.printHighscore();
+                    break;
+                case "p":
+                    String playerName = promptForPlayerName();
+                    Game game = loadGameOrSetupNewGame(playerName);
+                    game.start();
+                    return;
+                case "e":
+                    System.out.println("Exiting the game. Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid option. Please choose 'p' to play, 'h' for highscore, or 'e' to exit.");
+            }
+        } while (!option.equals("e") );
+    }
+
     private String promptForPlayerName() {
         System.out.print("Type the name of the player: ");
         return sc.nextLine();
@@ -24,10 +58,10 @@ public class GameInitializer {
     private Game loadGameOrSetupNewGame(String playerName) {
         boolean save = false;
         String saveFile = "";
-        System.out.print("Do you want to create save for the game? (yes/no): ");
+        System.out.print("Do you want to create a save for the game? (yes/no): ");
         String saveResponse = sc.nextLine().trim().toLowerCase();
 
-        if(saveResponse.equals("yes")){
+        if (saveResponse.equals("yes")) {
             System.out.print("Enter the file name: ");
             saveFile = sc.nextLine();
             save = true;
@@ -39,7 +73,7 @@ public class GameInitializer {
         if (loadResponse.equals("yes")) {
             System.out.print("Enter the filename: ");
             String filename = sc.nextLine();
-            Game loadedGame = new Game(playerName, filename,save, saveFile);
+            Game loadedGame = new Game(playerName, filename, save, saveFile);
 
             if (loadedGame.getBoard() != null) {
                 return loadedGame;
@@ -50,7 +84,6 @@ public class GameInitializer {
 
         int rows = Game.getValidDimension(sc, "rows", 4, 12);
         int cols = Game.getValidDimension(sc, "columns", 4, rows);
-        return new Game(rows, cols, playerName,save, saveFile);
+        return new Game(rows, cols, playerName, save, saveFile);
     }
-
 }

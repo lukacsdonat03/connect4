@@ -1,5 +1,7 @@
 package hu.nye;
 
+import hu.nye.highscore.HighscoreDatabase;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +19,8 @@ public class Game {
     private boolean saveGame;
     private String saveFile;
 
+    private final HighscoreDatabase highscoreDatabase;
+
     public Game(int row, int col, String name,boolean save,String saveFile) {
         this.board = new GameBoard(row,col);
         this.player1 = new Player(name , 'X');
@@ -24,6 +28,7 @@ public class Game {
         this.currentPlayer = this.player1;
         this.saveGame = save;
         this.saveFile = saveFile;
+        this.highscoreDatabase = new HighscoreDatabase();
     }
 
     public Game(String name, String filename, boolean save, String saveFile){
@@ -33,6 +38,7 @@ public class Game {
         this.board = this.loadFromFile(filename);
         this.saveGame = save;
         this.saveFile = saveFile;
+        this.highscoreDatabase = new HighscoreDatabase();
     }
 
     public void start(){
@@ -42,6 +48,9 @@ public class Game {
         this.board.printBoard();
         if (this.board.checkWin(this.currentPlayer.getDisc())) {
             System.out.println(this.currentPlayer.getName() + " wins!");
+            if (this.currentPlayer == this.player1) {
+                this.highscoreDatabase.createOrUpadteHighscore(this.player1.getName());
+            }
         }else{
             while(true){
                 System.out.println(this.currentPlayer.getName() + "'s turn (" + this.currentPlayer.getDisc() + ")");
@@ -67,6 +76,9 @@ public class Game {
                     this.board.printBoard();
                     if (this.board.checkWin(this.currentPlayer.getDisc())) {
                         System.out.println(this.currentPlayer.getName() + " wins!");
+                        if (this.currentPlayer == this.player1) {
+                            this.highscoreDatabase.createOrUpadteHighscore(this.player1.getName());
+                        }
                         break;
                     }
                     switchPlayer();
@@ -151,6 +163,10 @@ public class Game {
             sb.append(System.lineSeparator());
         }
         return sb.toString();
+    }
+
+    public void printHighscore(){
+        this.highscoreDatabase.printHighscore();
     }
 
     public GameBoard getBoard() {
