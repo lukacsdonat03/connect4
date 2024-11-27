@@ -7,7 +7,7 @@ public class HighscoreDatabase {
     private static final String URL = "jdbc:sqlite:highscores.db";
 
     public HighscoreDatabase() {
-        try(Connection conn = DriverManager.getConnection(URL)){
+        try(Connection conn = DriverManager.getConnection(this.getDatabaseUrl())){
             if(conn != null){
                 String createTableSQL = """
                     CREATE TABLE IF NOT EXISTS highscores (
@@ -30,7 +30,7 @@ public class HighscoreDatabase {
         String updateSql = "UPDATE highscores SET wins = wins+1 where player_name = ?";
         String insertSql = "INSERT INTO highscores(player_name, wins) VALUES (?,1)";
 
-        try (Connection conn = DriverManager.getConnection(URL);
+        try (Connection conn = DriverManager.getConnection(this.getDatabaseUrl());
              PreparedStatement checkStmt = conn.prepareStatement(checkSql);
              PreparedStatement updateStmt = conn.prepareStatement(updateSql);
              PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
@@ -56,7 +56,7 @@ public class HighscoreDatabase {
 
     public void printHighscore(){
         String query = "SELECT player_name, wins FROM highscores ORDER BY wins DESC";
-        try (Connection conn = DriverManager.getConnection(URL);
+        try (Connection conn = DriverManager.getConnection(this.getDatabaseUrl());
             PreparedStatement pstmt = conn.prepareStatement(query)) {
             ResultSet rs = pstmt.executeQuery();
             System.out.println("Highscores:");
@@ -69,4 +69,8 @@ public class HighscoreDatabase {
         }
     }
 
+
+    protected String getDatabaseUrl() {
+        return URL;
+    }
 }

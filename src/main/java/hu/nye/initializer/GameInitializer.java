@@ -1,6 +1,7 @@
-package hu.nye;
+package hu.nye.initializer;
 
 import hu.nye.highscore.HighscoreDatabase;
+import hu.nye.models.Game;
 
 import java.util.Scanner;
 
@@ -55,7 +56,7 @@ public class GameInitializer {
         return sc.nextLine();
     }
 
-    private Game loadGameOrSetupNewGame(String playerName) {
+    public Game loadGameOrSetupNewGame(String playerName) {
         boolean save = false;
         String saveFile = "";
         System.out.print("Do you want to create a save for the game? (yes/no): ");

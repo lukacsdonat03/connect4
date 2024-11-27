@@ -1,4 +1,4 @@
-package hu.nye;
+package hu.nye.models;
 
 import hu.nye.highscore.HighscoreDatabase;
 
@@ -90,7 +90,7 @@ public class Game {
         scanner.close();
     }
 
-    private void switchPlayer(){
+    public void switchPlayer(){
         this.currentPlayer = (this.currentPlayer == this.player1) ? this.player2 : this.player1;
     }
 
@@ -154,7 +154,7 @@ public class Game {
         }
     }
 
-    private String saveBoardToString(){
+    public String saveBoardToString(){
         StringBuilder sb = new StringBuilder();
         for(char[] row : this.getBoard().getBoard()){
             for(char cell : row){

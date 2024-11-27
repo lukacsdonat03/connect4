@@ -1,6 +1,6 @@
 package hu.nye;
 
-import hu.nye.highscore.HighscoreDatabase;
+import hu.nye.initializer.GameInitializer;
 
 import java.util.Scanner;
 

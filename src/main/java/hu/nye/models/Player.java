@@ -1,4 +1,4 @@
-package hu.nye;
+package hu.nye.models;
 
 public class Player {
     private final String name;

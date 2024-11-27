@@ -1,4 +1,4 @@
-package hu.nye;
+package hu.nye.models;
 
 import java.util.Arrays;
 
@@ -29,7 +29,6 @@ public class GameBoard {
             }
         }
 
-        //A column null
         return false;
     }
 
