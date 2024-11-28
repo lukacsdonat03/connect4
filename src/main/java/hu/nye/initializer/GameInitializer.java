@@ -19,6 +19,9 @@ public class GameInitializer {
         return game;
     }
 
+    /**
+     * Kiírja a menüt
+     */
     private void menu() {
         System.out.println("\t MENU");
         System.out.println("Play game (p)");
@@ -26,6 +29,9 @@ public class GameInitializer {
         System.out.println("Exit (e)");
     }
 
+    /**
+     * Interaktál a menüvel
+     */
     public void startMenu() {
         String option;
         do {
@@ -51,11 +57,20 @@ public class GameInitializer {
         } while (!option.equals("e") );
     }
 
+    /**
+     * Bekéri a játékos nevét
+     *
+     */
     private String promptForPlayerName() {
         System.out.print("Type the name of the player: ");
         return sc.nextLine();
     }
 
+    /**
+     * Betölt egy játékot vagy létrehoz egy újat
+     * @param playerName    Játékos neve
+     * @return              Egy adott játék ami lehet betöltött vagy új
+     */
     public Game loadGameOrSetupNewGame(String playerName) {
         boolean save = false;
         String saveFile = "";

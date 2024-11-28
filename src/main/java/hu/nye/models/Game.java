@@ -21,9 +21,9 @@ public class Game {
 
     private final HighscoreDatabase highscoreDatabase;
 
-    public Game(int row, int col, String name,boolean save,String saveFile) {
-        this.board = new GameBoard(row,col);
-        this.player1 = new Player(name , 'X');
+    public Game(int row, int col, String name, boolean save, String saveFile) {
+        this.board = new GameBoard(row, col);
+        this.player1 = new Player(name, 'X');
         this.player2 = new Player("Opponent", 'O');
         this.currentPlayer = this.player1;
         this.saveGame = save;
@@ -31,8 +31,8 @@ public class Game {
         this.highscoreDatabase = new HighscoreDatabase();
     }
 
-    public Game(String name, String filename, boolean save, String saveFile){
-        this.player1 = new Player(name , 'X');
+    public Game(String name, String filename, boolean save, String saveFile) {
+        this.player1 = new Player(name, 'X');
         this.player2 = new Player("Opponent", 'O');
         this.currentPlayer = this.player1;
         this.board = this.loadFromFile(filename);
@@ -41,7 +41,11 @@ public class Game {
         this.highscoreDatabase = new HighscoreDatabase();
     }
 
-    public void start(){
+    /**
+     * Elinditja és kezeli a játékmenetet
+     * A játékosok felváltva tesznek lépéseket, amíg a valamelyik nem nyer vagy a játék véget nem ér
+     */
+    public void start() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("The game started!");
 
@@ -51,16 +55,16 @@ public class Game {
             if (this.currentPlayer == this.player1) {
                 this.highscoreDatabase.createOrUpadteHighscore(this.player1.getName());
             }
-        }else{
-            while(true){
+        } else {
+            while (true) {
                 System.out.println(this.currentPlayer.getName() + "'s turn (" + this.currentPlayer.getDisc() + ")");
                 int column = -1;
 
-                if(this.currentPlayer == this.player1){
+                if (this.currentPlayer == this.player1) {
                     System.out.print("Enter column (1-" + (this.board.getColumns()) + "): ");
-                    try{
+                    try {
                         column = scanner.nextInt();
-                    }catch (InputMismatchException exc){
+                    } catch (InputMismatchException exc) {
                         System.out.println("Invalid input. Please enter a valid number!");
                         scanner.next();
                     }
@@ -70,7 +74,7 @@ public class Game {
                 }
 
                 if (this.board.placeDisc(column, this.currentPlayer.getDisc())) {
-                    if(this.saveGame){
+                    if (this.saveGame) {
                         this.saveBoardToFile(this.saveFile);
                     }
                     this.board.printBoard();
@@ -90,10 +94,22 @@ public class Game {
         scanner.close();
     }
 
-    public void switchPlayer(){
+    /**
+     * Átváltja az aktuális játékost
+     */
+    public void switchPlayer() {
         this.currentPlayer = (this.currentPlayer == this.player1) ? this.player2 : this.player1;
     }
 
+    /**
+     * Bekéri és érvényesíti a játék méreteit (sorok vagy oszlopok száma) a felhasználótól.
+     *
+     * @param sc             A {@link Scanner} objektum a felhasználói bemenet olvasásához.
+     * @param dimensionName  A méret típusa, például "sorok" vagy "oszlopok".
+     * @param min            A méret minimális értéke.
+     * @param max            A méret maximális értéke.
+     * @return               A felhasználó által megadott érvényes méret.
+     */
     public static int getValidDimension(Scanner sc, String dimensionName, int min, int max) {
         int dimension;
         StringBuilder messageBuilder = new StringBuilder();
@@ -123,6 +139,12 @@ public class Game {
         return dimension;
     }
 
+    /**
+     * Egy játéktábla betöltése egy megadott fájlból.
+     *
+     * @param filename A fájl neve, amelyből a táblát be kell tölteni.
+     * @return A betöltött játéktábla, vagy null, ha a betöltés sikertelen.
+     */
     public GameBoard loadFromFile(String filename) {
         File file = new File(filename);
         if (!file.exists()) {
@@ -136,7 +158,7 @@ public class Game {
                 char[] line = lines.get(row).toCharArray();
                 matrix[row] = line;
             }
-            this.board = new GameBoard(lines.size(),singleLineSize);
+            this.board = new GameBoard(lines.size(), singleLineSize);
             this.board.loadGameboard(matrix);
             return this.board;
         } catch (IOException e) {
@@ -145,19 +167,29 @@ public class Game {
         }
     }
 
-    public void saveBoardToFile(String filename){
-        try{
+    /**
+     * A játéktábla aktuális állapotának mentése egy megadott fájlba.
+     *
+     * @param filename A fájl neve, amelybe a táblát menteni kell.
+     */
+    public void saveBoardToFile(String filename) {
+        try {
             Files.write(Paths.get(filename), this.saveBoardToString().getBytes());
             System.out.println("The board has been successfully saved");
         } catch (IOException e) {
-            System.out.println("Failed to save the board to file: "+filename);
+            System.out.println("Failed to save the board to file: " + filename);
         }
     }
 
-    public String saveBoardToString(){
+    /**
+     * A játéktábla állapotának szöveges reprezentációját adja vissza.
+     *
+     * @return A játéktábla szöveges formában.
+     */
+    public String saveBoardToString() {
         StringBuilder sb = new StringBuilder();
-        for(char[] row : this.getBoard().getBoard()){
-            for(char cell : row){
+        for (char[] row : this.getBoard().getBoard()) {
+            for (char cell : row) {
                 sb.append(cell);
             }
             sb.append(System.lineSeparator());
@@ -165,7 +197,10 @@ public class Game {
         return sb.toString();
     }
 
-    public void printHighscore(){
+    /**
+     * Kinyomtatja a jelenlegi legjobb eredményeket.
+     */
+    public void printHighscore() {
         this.highscoreDatabase.printHighscore();
     }
 
